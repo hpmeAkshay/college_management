@@ -7,7 +7,7 @@ class Users::RegistrationsController < Devise::RegistrationsController
       build_resource(sign_up_params)
       resource.save
       if resource.persisted?
-        # Twilio::SmsService.new(to: resource.full_phone_number, pin: '').send_otp
+        Twilio::SmsService.new(to: resource.full_phone_number, pin: '').send_otp
         sign_up(resource_name, resource)
         token = request.env['warden-jwt_auth.token']
         response_data = {
@@ -35,7 +35,7 @@ class Users::RegistrationsController < Devise::RegistrationsController
           else
             existing_user.full_phone_number = params[:data][:user][:full_phone_number]
             token = existing_user.generate_jwt
-            # Twilio::SmsService.new(to:existing_user.full_phone_number, pin: '').send_otp
+            Twilio::SmsService.new(to:existing_user.full_phone_number, pin: '').send_otp
             response = {
               response: { 
                 id: existing_user.id, 
